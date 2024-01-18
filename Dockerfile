@@ -10,11 +10,11 @@ RUN npm run build
 FROM node:21.5-alpine3.19 as nextjs-server
 WORKDIR /app
 COPY --from=build /app/ ./
-EXPOSE 3000
+EXPOSE 3001
 CMD ["npm","run", "start" ]
 
 # Nginx Stage - as a reverse proxy
 FROM nginx:1.16.0-alpine as nginx-server
 COPY ./devsecapp_assistant_app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
