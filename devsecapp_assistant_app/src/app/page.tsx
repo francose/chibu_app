@@ -1,15 +1,54 @@
-import Image from "next/image";
-import Test from "./landing/page";
+// pages/index.js
 
 export default function Home() {
   return (
-    <main>
-      <div className="bg-gray-100 flex items-center justify-center h-screen">
-        <div className="bg-black p-8 rounded-lg shadow-md w-full max-w-sm">
-          <h1 className="text-2xl font-bold text-center mb-4">Welcome!</h1>
-          <p className="text-gray-200 text-center">Chibu Assistant</p>
+    <div
+      className="relative text-center py-12 min-h-screen flex flex-col justify-center items-center"
+      style={{
+        backgroundImage: 'url("/images/banners/sky.png")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Overlay with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-300 to-indigo-800 opacity-75"></div>
+
+      {/* Ensure the content is positioned above the overlay */}
+      <div className="relative z-10">
+        <h1 style={{ margin: "20px 0",color:"#111", fontSize: "24px", fontWeight: "bold" }}>
+          Chibu.io
+        </h1>
+        <p style={{ margin: "20px 0", fontSize: "24px", fontWeight: "bold" }}>
+          We deliver the best
+        </p>
+        <p>
+          Chibu.io lets your hosted apps run in the most efficient and secure
+          way.
+        </p>
+        <button
+          style={{
+            marginTop: "30px",
+            padding: "10px 30px",
+            fontSize: "18px",
+            backgroundColor: "#111",
+            color: "white",
+            border: "none",
+            borderRadius: "25px",
+            cursor: "pointer",
+          }}
+        >
+          GET STARTED
+        </button>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "50px",
+          }}
+        >
+       
         </div>
       </div>
-    </main>
+    </div>
   );
 }
