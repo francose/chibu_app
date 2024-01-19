@@ -11,7 +11,7 @@ export default function Home() {
       }}
     >
       {/* Overlay with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-300 to-indigo-800 opacity-75"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-orange-300 to-indigo-900 opacity-75"></div>
 
       {/* Ensure the content is positioned above the overlay */}
       <div className="relative z-10">

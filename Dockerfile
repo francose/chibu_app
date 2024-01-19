@@ -6,7 +6,6 @@ RUN npm install
 COPY ./devsecapp_assistant_app/ ./
 RUN npm run build
 
-ENV NEXT_TELEMETRY_DISABLED 1
 
 
 # Node.js Stage - for running Next.js server
@@ -14,7 +13,7 @@ FROM node:21.5-alpine3.19 as nextjs-server
 WORKDIR /app
 COPY --from=build /app/ ./
 EXPOSE 3000
-CMD ["npm","run", "dev" ]
+CMD ["npm","run", "start" ]
 
 # Nginx Stage - as a reverse proxy
 # FROM nginx:1.16.0-alpine as nginx-server
