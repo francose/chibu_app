@@ -3,9 +3,12 @@ import Test from "./landing/page";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        DevSecOps Assistant
+    <main>
+      <div className="bg-gray-100 flex items-center justify-center h-screen">
+        <div className="bg-black p-8 rounded-lg shadow-md w-full max-w-sm">
+          <h1 className="text-2xl font-bold text-center mb-4">Welcome!</h1>
+          <p className="text-gray-200 text-center">Chibu Assistant</p>
+        </div>
       </div>
     </main>
   );

@@ -62,29 +62,8 @@ locals {
   ]
 }
 
-resource "aws_ecs_task_definition" "chibu-task" {
-  family = "chibu-task_first"
-  container_definitions = jsonencode([
-    merge(local.container_definitions[0], {
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.ecs_logs.name,
-          "awslogs-region"        = "us-east-1",
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
-    })
-  ])
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  memory                   = 512
-  cpu                      = 256
-  execution_role_arn       = aws_iam_role.ecsTaskExecution.arn
-}
-
-resource "aws_iam_role" "ecsTaskExecution" {
-  name               = "ecsTaskExecution"
+resource "aws_iam_role" "ecsTaskExecutionRoleNew" {
+  name               = "ecsTaskExecutionRoleNew"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -98,8 +77,8 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "ecsTaskExecution_policy" {
-  role       = aws_iam_role.ecsTaskExecution.name
+resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
+  role       = aws_iam_role.ecsTaskExecutionRoleNew.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
@@ -193,6 +172,27 @@ resource "aws_ecs_service" "app_service" {
   }
 }
 
+resource "aws_ecs_task_definition" "chibu-task" {
+  family = "chibu-task_first"
+  container_definitions = jsonencode([
+    merge(local.container_definitions[0], {
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs_logs.name,
+          "awslogs-region"        = "us-east-1",
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
+    })
+  ])
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  memory                   = 512
+  cpu                      = 256
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRoleNew.arn
+}
+
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name = "/ecs/chibu"
 }
@@ -213,17 +213,15 @@ resource "aws_iam_policy" "ecs_logging" {
   })
 }
 
-
-
-resource "aws_iam_role_policy_attachment" "ecsTaskExecution_logging" {
-  role       = aws_iam_role.ecsTaskExecution.name
+resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_logging" {
+  role       = aws_iam_role.ecsTaskExecutionRoleNew.name
   policy_arn = aws_iam_policy.ecs_logging.arn
 }
 
 resource "null_resource" "build_and_push_docker_image" {
   provisioner "local-exec" {
     command = <<EOD
-      $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 587425951590.dkr.ecr.us-east-1.amazonaws.com)
+      aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 587425951590.dkr.ecr.us-east-1.amazonaws.com
       docker buildx build --platform=linux/amd64 -t chibu-repo .
       docker tag chibu-repo:latest 587425951590.dkr.ecr.us-east-1.amazonaws.com/chibu-repo:latest
       docker push 587425951590.dkr.ecr.us-east-1.amazonaws.com/chibu-repo:latest
@@ -234,6 +232,7 @@ resource "null_resource" "build_and_push_docker_image" {
     always_run = "${timestamp()}"
   }
 }
+
 
 output "app_url" {
   value = aws_alb.application_load_balancer.dns_name

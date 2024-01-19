@@ -8,16 +8,24 @@ services:
     volumes:
       - ./devsecapp_assistant_app:/app 
     ports:
-      - "3001:3001"
-    restart: always
-
-  nginx-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: nginx-server
-    ports:
       - "3000:3000"
     restart: always
-    depends_on:
-      - nextjs-server
+    networks:
+      - app-network
+
+  # nginx-server:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: nginx-server
+  #   ports:
+  #     - "80:80"
+  #   restart: always
+  #   depends_on:
+  #     - nextjs-server
+  #   networks:
+  #     - app-network
+  #   command: /bin/sh -c "while ! nc -z nextjs-server 3000; do sleep 1; done; nginx -g 'daemon off;'"
+
+networks:
+  app-network:
